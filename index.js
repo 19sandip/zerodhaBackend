@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-const cors = require("cors");
+
 const HoldingsModel = require("./models/HoldingsModel.js");
 const { PositionsModel } = require("./models/PositionsModel.js");
 const { OrdersModel } = require("./models/OrdersModel.js");
@@ -12,19 +12,13 @@ const AuthRoute = require("./AuthRoute.js");
 const Port = process.env.PORT || 3004;
 const url = process.env.MONGO_URL;
 const app = express();
-const allowedOrigins = ['http://localhost:3000', 'http://localhost:3001']; // Add your frontend URLs here
+const cors = require("cors");
+
 app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
-  },
-  credentials: true,
+  origin: "*",  // ✅ Allows requests from ALL origins
+  credentials: true
 }));
+
 
 app.use(bodyParser.json());
 
@@ -138,7 +132,7 @@ app.listen(Port, () => {
   console.log("Server started at port", Port);
 });
 
-mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(url)
   .then(() => {
     console.log("db connected successfully");
   })
